@@ -76,8 +76,8 @@ github.com/onsi/gomega v1.8.1/go.mod h1:Ho0h+IUsWyvy1OpqCwxlQ/21gkhVunqlU8fDGcoT
 github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181zc=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/pm-esd/redis v1.1.0 h1:yOyeppC4bjdFF4FtpMg92KyhoT7T8cZzpcQSp+wrDxQ=
-github.com/pm-esd/redis v1.1.0/go.mod h1:UJcVT7XZWnh8/jbPx43zHgr792v5FXwrXXH9bCQxtcA=
+github.com/pm-esd/redis v1.1.2 h1:NWSeu96nOEeD+UqoAZO+/4iVNAXCR9jQgKtk+DRk2D8=
+github.com/pm-esd/redis v1.1.2/go.mod h1:UJcVT7XZWnh8/jbPx43zHgr792v5FXwrXXH9bCQxtcA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
