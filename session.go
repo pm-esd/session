@@ -72,6 +72,7 @@ func (this *Session) Remove(key string) {
 	var h = this.Driver
 	var m map[string]interface{}
 	var content string
+	var bytes []byte
 
 	content = h.Get(this.Name).Val()
 	json.Unmarshal([]byte(content), &m)
@@ -80,9 +81,13 @@ func (this *Session) Remove(key string) {
 	var n = len(keys)
 	if n < 2 {
 		delete(m, key)
+		bytes, _ = json.Marshal(m)
+		h.Set(this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
 		return
 	}
 	delSliceMap(m, keys)
+	bytes, _ = json.Marshal(m)
+	h.Set(this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
 }
 
 // sess.Put("info.age", "28")
@@ -93,10 +98,8 @@ func setSliceMap(m map[string]interface{}, keys []string, value interface{}) map
 
 	for i = 0; i < limit; i++ {
 		_, ok := itMap[keys[i]]
-		if ok {
-			// fmt.Printf("%s yes\n", keys[i])
-		} else {
-			// fmt.Printf("%s no\n", keys[i])
+		if !ok {
+			// } else {
 			itMap[keys[i]] = make(map[string]interface{})
 		}
 		itMap = itMap[keys[i]].(map[string]interface{})
@@ -158,7 +161,7 @@ func (this *Session) Has(key string) bool {
 func (this *Session) Push(key string, e interface{}) {
 }
 */
-
+//Destroy 释放
 func (this *Session) Destroy() int64 {
 	var h = this.Driver
 	return h.Del(this.Name).Val()
