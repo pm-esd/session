@@ -1,15 +1,16 @@
 package session
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"time"
 
-	"github.com/pm-esd/redis"
+	"github.com/pm-esd/querycache"
 )
 
 type Session struct {
-	Driver *redis.Client
+	Driver *querycache.Client
 	Name   string
 	TTL    int64 // seconds
 }
@@ -17,16 +18,19 @@ type Session struct {
 // https://laravel.com/docs/5.8/session
 // Pushing To Array Session Values
 // session.Put('user.teams', 'developers');  => {user: {teams: "developer"}}
-func (this *Session) Put(key string, value interface{}) error {
+func (this *Session) Put(ctx context.Context, key string, value interface{}) error {
 	var h = this.Driver
 	var bytes []byte
 	var err error
 	var content string
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	m := make(map[string]interface{})
 
 	// fmt.Printf("Exists %s?\n", this.Name)
-	if h.Exists(this.Name).Val() == 1 {
-		content = h.Get(this.Name).Val()
+	if h.Exists(ctx, this.Name).Val() == 1 {
+		content = h.Get(ctx, this.Name).Val()
 	} else {
 		content = "{}"
 	}
@@ -47,17 +51,21 @@ func (this *Session) Put(key string, value interface{}) error {
 	}
 
 	bytes, _ = json.Marshal(m)
-	h.Set(this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
+	h.Set(ctx, this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
 	return nil
 }
 
 // s.Get
-func (this *Session) Get(key string) interface{} {
+func (this *Session) Get(ctx context.Context, key string) interface{} {
 	var h = this.Driver
 	var m map[string]interface{}
 	var content string
 
-	content = h.Get(this.Name).Val()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	content = h.Get(ctx, this.Name).Val()
 	json.Unmarshal([]byte(content), &m)
 
 	var keys = strings.Split(key, ".")
@@ -68,13 +76,17 @@ func (this *Session) Get(key string) interface{} {
 	return getSliceMap(m, keys)
 }
 
-func (this *Session) Remove(key string) {
+func (this *Session) Remove(ctx context.Context, key string) {
 	var h = this.Driver
 	var m map[string]interface{}
 	var content string
 	var bytes []byte
 
-	content = h.Get(this.Name).Val()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	content = h.Get(ctx, this.Name).Val()
 	json.Unmarshal([]byte(content), &m)
 
 	var keys = strings.Split(key, ".")
@@ -82,12 +94,12 @@ func (this *Session) Remove(key string) {
 	if n < 2 {
 		delete(m, key)
 		bytes, _ = json.Marshal(m)
-		h.Set(this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
+		h.Set(ctx, this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
 		return
 	}
 	delSliceMap(m, keys)
 	bytes, _ = json.Marshal(m)
-	h.Set(this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
+	h.Set(ctx, this.Name, string(bytes), time.Duration(this.TTL)*time.Second)
 }
 
 // sess.Put("info.age", "28")
@@ -162,9 +174,13 @@ func (this *Session) Push(key string, e interface{}) {
 }
 */
 //Destroy 释放
-func (this *Session) Destroy() int64 {
+func (this *Session) Destroy(ctx context.Context) int64 {
 	var h = this.Driver
-	return h.Del(this.Name).Val()
+
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return h.Del(ctx, this.Name).Val()
 }
 
 // func TestSession_Put(t *testing.T) {
