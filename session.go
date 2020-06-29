@@ -23,8 +23,8 @@ func (this *Session) Put(ctx context.Context, key string, value interface{}) err
 	var bytes []byte
 	var err error
 	var content string
-	if ctx == nil {
-		ctx = context.Background()
+	if ctx == nil || ctx.Err() != nil {
+		ctx = context.TODO()
 	}
 	m := make(map[string]interface{})
 
@@ -61,8 +61,8 @@ func (this *Session) Get(ctx context.Context, key string) interface{} {
 	var m map[string]interface{}
 	var content string
 
-	if ctx == nil {
-		ctx = context.Background()
+	if ctx == nil || ctx.Err() != nil {
+		ctx = context.TODO()
 	}
 
 	content = h.Get(ctx, this.Name).Val()
@@ -82,8 +82,8 @@ func (this *Session) Remove(ctx context.Context, key string) {
 	var content string
 	var bytes []byte
 
-	if ctx == nil {
-		ctx = context.Background()
+	if ctx == nil || ctx.Err() != nil {
+		ctx = context.TODO()
 	}
 
 	content = h.Get(ctx, this.Name).Val()
@@ -177,8 +177,8 @@ func (this *Session) Push(key string, e interface{}) {
 func (this *Session) Destroy(ctx context.Context) int64 {
 	var h = this.Driver
 
-	if ctx == nil {
-		ctx = context.Background()
+	if ctx == nil || ctx.Err() != nil {
+		ctx = context.TODO()
 	}
 	return h.Del(ctx, this.Name).Val()
 }
